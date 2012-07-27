@@ -142,6 +142,7 @@ set(ninja_lib
         ${srcdir}/lexer.cc
         ${srcdir}/metrics.cc
         ${srcdir}/manifest_parser.cc
+		${srcdir}/minidump-win32.cc
         ${srcdir}/state.cc
         ${srcdir}/util.cc)
 
