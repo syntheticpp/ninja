@@ -16,6 +16,8 @@
 
 cmake_minimum_required(VERSION 2.8.4)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin)
+
 if(ninja_srcdir)
     set(srcdir ${ninja_srcdir}/src)
 else()
@@ -57,12 +59,6 @@ elseif(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0501)
 endif()
 
-if(debug)
-    set(CMAKE_BUILD_TYPE Debug)
-else()
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
 # cross compile
 if(UNIX AND windows)
     set(CMAKE_SYSTEM_NAME Windows)
@@ -91,7 +87,6 @@ message(STATUS)
 message(STATUS "Options:")
 ninja_option_list()
 message(STATUS)
-
 
 
 #
@@ -123,6 +118,12 @@ set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS_INIT}   ${cflags}")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS_INIT} ${cflags}")
 
 
+if(debug)
+    set(CMAKE_BUILD_TYPE Debug)
+else()
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 
 #
 # Source files
@@ -142,14 +143,19 @@ set(ninja_lib
         ${srcdir}/lexer.cc
         ${srcdir}/metrics.cc
         ${srcdir}/manifest_parser.cc
-		${srcdir}/minidump-win32.cc
+        ${srcdir}/minidump-win32.cc
         ${srcdir}/state.cc
         ${srcdir}/util.cc)
 
 if(linux)
     list(APPEND  ninja_lib ${srcdir}/subprocess.cc)
 elseif(windows)
-    list(APPEND ninja_lib ${srcdir}/getopt.c ${srcdir}/subprocess-win32.cc)
+    list(APPEND ninja_lib 
+        ${srcdir}/getopt.c 
+        ${srcdir}/subprocess-win32.cc 
+        ${srcdir}/msvc_helper-win32.cc 
+        ${srcdir}/msvc_helper_main-win32.cc
+        ${srcdir}/includes_normalize-win32.cc)
 endif()
 
 
