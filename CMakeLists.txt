@@ -145,7 +145,8 @@ set(ninja_lib
         ${srcdir}/manifest_parser.cc
         ${srcdir}/minidump-win32.cc
         ${srcdir}/state.cc
-        ${srcdir}/util.cc)
+        ${srcdir}/util.cc
+        ${srcdir}/version.cc)
 
 if(linux)
     list(APPEND  ninja_lib ${srcdir}/subprocess.cc)
