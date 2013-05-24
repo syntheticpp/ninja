@@ -133,6 +133,7 @@ set(ninja_lib
         ${srcdir}/build.cc
         ${srcdir}/build_log.cc
         ${srcdir}/clean.cc
+		${srcdir}/deps_log.cc
         ${srcdir}/depfile_parser.cc
         ${srcdir}/disk_interface.cc
         ${srcdir}/edit_distance.cc
@@ -141,6 +142,7 @@ set(ninja_lib
         ${srcdir}/graph.cc
         ${srcdir}/graphviz.cc
         ${srcdir}/lexer.cc
+		${srcdir}/line_printer.cc
         ${srcdir}/metrics.cc
         ${srcdir}/manifest_parser.cc
         ${srcdir}/minidump-win32.cc
