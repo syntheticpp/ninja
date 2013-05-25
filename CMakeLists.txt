@@ -49,13 +49,16 @@ ninja_option(debug           "enable debugging flags"                OFF)
 ninja_option(verbose         "verbose output while building"         OFF)
 ninja_option(gtest           "use gtest unpacked in given directory" OFF)
 ninja_option(monolithic-test "build tests into one binary"           ON)
+ninja_option(browser         "build browser"                         ON)
 
 if(platform)
     set(${platform} 1)
 elseif(UNIX)
     set(linux 1)
+    add_definitions(-DUSE_PPOLL)
 elseif(WIN32)
     set(windows 1)
+    set(browser 0)
     add_definitions(-D_WIN32_WINNT=0x0501)
 endif()
 
@@ -145,39 +148,48 @@ set(ninja_lib
 		${srcdir}/line_printer.cc
         ${srcdir}/metrics.cc
         ${srcdir}/manifest_parser.cc
-        ${srcdir}/minidump-win32.cc
         ${srcdir}/state.cc
         ${srcdir}/util.cc
         ${srcdir}/version.cc)
 
 if(linux)
-    list(APPEND  ninja_lib ${srcdir}/subprocess.cc)
+    list(APPEND  ninja_lib ${srcdir}/subprocess-posix.cc)
 elseif(windows)
     list(APPEND ninja_lib 
         ${srcdir}/getopt.c 
-        ${srcdir}/subprocess-win32.cc 
+        ${srcdir}/subprocess-win32.cc
+        ${srcdir}/minidump-win32.cc
         ${srcdir}/msvc_helper-win32.cc 
         ${srcdir}/msvc_helper_main-win32.cc
         ${srcdir}/includes_normalize-win32.cc)
 endif()
 
 
-find_package(PythonInterp)
-if(PYTHONINTERP_FOUND)
-    if(linux)
-        set(inline ${CMAKE_BINARY_DIR}/concrete_inline.sh)
-        file(WRITE ${inline}
-        "mkdir -p ${CMAKE_BINARY_DIR}/build
-         ${srcdir}/inline.sh kBrowsePy < ${srcdir}/browse.py > ${CMAKE_BINARY_DIR}/build/browse_py.h\n")
-        set(browser 1)
+if(browser)
+    find_package(PythonInterp)
+    if(PYTHONINTERP_FOUND)
+        if(linux)
+            set(inline ${CMAKE_BINARY_DIR}/concrete_inline.sh)
+            file(WRITE ${inline}
+            "mkdir -p ${CMAKE_BINARY_DIR}/build
+             ${srcdir}/inline.sh kBrowsePy < ${srcdir}/browse.py > ${CMAKE_BINARY_DIR}/build/browse_py.h\n")
+            set(build-browser 1)
+        endif()
+        if(build-browser)
+            message(STATUS "Building dependency browser")
+            message(STATUS)
+            add_definitions(-DNINJA_PYTHON="${PYTHON_EXECUTABLE}")
+            list(APPEND ninja_lib ${srcdir}/browse.cc)
+            execute_process(COMMAND sh ${inline})
+            include_directories(${CMAKE_BINARY_DIR}/build)
+        endif()
     endif()
-    if(browser)
-        message(STATUS "Building dependency browser")
-        message(STATUS)
-        add_definitions(-DNINJA_PYTHON="${PYTHON_EXECUTABLE}")
-        list(APPEND ninja_lib ${srcdir}/browse.cc)
-        execute_process(COMMAND sh ${inline})
-        include_directories(${CMAKE_BINARY_DIR}/build)
+else()
+    if(UNIX)
+        set(dummy ${CMAKE_BINARY_DIR}/build/browse_dummy.cc)
+        file(WRITE ${dummy} "#include <stdio.h>\n#include \"state.h\"\nvoid RunBrowsePython(State* state, const char* ninja_command, const char* initial_target) { printf(\"Browser not availabe\\n.\"); }\n" )
+        list(APPEND ninja_lib ${dummy})
+        include_directories(${srcdir})
     endif()
 endif()
 
