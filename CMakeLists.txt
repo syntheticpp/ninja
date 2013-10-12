@@ -136,21 +136,21 @@ set(ninja_lib
         ${srcdir}/build.cc
         ${srcdir}/build_log.cc
         ${srcdir}/clean.cc
-		${srcdir}/deps_log.cc
+        ${srcdir}/debug_flags.cc
         ${srcdir}/depfile_parser.cc
+        ${srcdir}/deps_log.cc
         ${srcdir}/disk_interface.cc
         ${srcdir}/edit_distance.cc
         ${srcdir}/eval_env.cc
-        ${srcdir}/explain.cc
         ${srcdir}/graph.cc
         ${srcdir}/graphviz.cc
         ${srcdir}/lexer.cc
-		${srcdir}/line_printer.cc
-        ${srcdir}/metrics.cc
+        ${srcdir}/line_printer.cc
         ${srcdir}/manifest_parser.cc
+        ${srcdir}/metrics.cc
         ${srcdir}/state.cc
         ${srcdir}/util.cc
-        ${srcdir}/version.cc)
+		${srcdir}/version.cc)
 
 if(linux)
     list(APPEND  ninja_lib ${srcdir}/subprocess-posix.cc)
@@ -158,10 +158,12 @@ elseif(windows)
     list(APPEND ninja_lib 
         ${srcdir}/getopt.c 
         ${srcdir}/subprocess-win32.cc
-        ${srcdir}/minidump-win32.cc
         ${srcdir}/msvc_helper-win32.cc 
         ${srcdir}/msvc_helper_main-win32.cc
         ${srcdir}/includes_normalize-win32.cc)
+    if(MSVC)
+        list(APPEND ninja_lib ${srcdir}/minidump-win32.cc)
+    endif()
 endif()
 
 
