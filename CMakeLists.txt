@@ -97,7 +97,7 @@ message(STATUS)
 #
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(cflags "${cflags} -Wall -Wextra -Wno-deprecated -Wno-unused-parameter -fno-exceptions -pipe")
+    set(cflags "${cflags} -Wall -Wextra -Wno-deprecated -Wno-unused-parameter -fno-exceptions -pipe -std=c++11")
     set(nortti -fno-rtti)
     if(debug)
         set(cflags "${cflags} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
