@@ -113,7 +113,7 @@ elseif(MSVC)
     set(nortti /GR-)
     string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     string(REGEX REPLACE "/EHsc" "/EHsc-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DNOMINMAX)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -D_VARIADIC_MAX=10)
     set(platformlibs shlwapi.lib)
 endif()
 
