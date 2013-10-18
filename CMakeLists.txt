@@ -113,12 +113,13 @@ elseif(MSVC)
     set(nortti /GR-)
     string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     string(REGEX REPLACE "/EHsc" "/EHsc-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(REGEX REPLACE "/GR" "/GR-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -D_VARIADIC_MAX=10)
     set(platformlibs shlwapi.lib)
 endif()
 
-set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS_INIT}   ${cflags}")
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS_INIT} ${cflags}")
+set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}   ${cflags}")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${cflags}")
 
 
 if(debug)
@@ -150,7 +151,7 @@ set(ninja_lib
         ${srcdir}/metrics.cc
         ${srcdir}/state.cc
         ${srcdir}/util.cc
-		${srcdir}/version.cc)
+        ${srcdir}/version.cc)
 
 if(linux)
     list(APPEND  ninja_lib ${srcdir}/subprocess-posix.cc)
